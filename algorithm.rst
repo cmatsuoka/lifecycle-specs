@@ -25,43 +25,18 @@ execution phase.
                   end
 
               if (part, step) was explicitly requested:
-                  __clean(part, step)
-                  for each step starting at this one:
-                      remove step from list of steps we already ran for this part
-                  __run_step(part, step)
+                  __rerun_step(part, step)
                   end
 
               if __is_dirty(part, step):
-                  __clean(part, step)
-                  for each step starting at this one:
-                      remove step from list of steps we already ran for this part
-                  __run_step(part, step)
+                  __rerun_step(part, step)
                   end
 
               if __is_outdated(part, step):
-                  if step is PULL:
-                      // this is like __run_step with some extra stuff added
-                      __prepare(part, step)
-                      run scriptlet for (part, step)
-                      update according to source-type
-                      update state for (part, step)
-                      end
-
-                  if step is BUILD:
-                      // this is like __run_step with some extra stuff added
-                      __prepare(part, step)
-                      ?? do some source check and return if needed
-                      update according to source-type
-                      run scriptlet for (part, step)
-                      organize (overwriting if needed)
-                      update state for (part, step)
-                      end
-
-                  if state is STAGE or PRIME:
-                      __clean(part, step)
-                      for each step starting at this one:
-                          remove step from list of steps we already ran for this part
-                      __run_step(part, step) 
+                  if step is PULL or step is BUILD:
+                      __update_step(part, step)
+                  else:
+                      __rerun_step(part, step)
 
                   end
 
@@ -98,11 +73,11 @@ execution phase.
       if there are dependencies, run lifecycle again for this step and dependent parts
       remove part install tree
 
-      if part is PULL:
+      if step is PULL:
           fetch and install stage packages
           fetch and install stage snaps
 
-      if part is STAGE:
+      if step is STAGE:
           install stage packages
           install stage snaps
 
@@ -112,6 +87,35 @@ execution phase.
       __prepare(part, step)
       run scriptlet for (part, step)
       update state for (part, step)
+
+
+
+  __rerun_step(part, step):
+      __clean(part, step)
+      for each step starting at this one:
+          remove step from list of steps we already ran for this part
+      __run_step(part, step)
+
+
+
+  __update_step(part, step):
+      if step is PULL:
+          // this is like __run_step with some extra stuff added
+          __prepare(part, step)
+          run scriptlet for (part, step)
+          update according to source-type
+          update state for (part, step)
+          end
+
+      if step is BUILD:
+          // this is like __run_step with some extra stuff added
+          __prepare(part, step)
+          ?? do some source check and return if needed
+          update according to source-type
+          run scriptlet for (part, step)
+          organize (overwriting if needed)
+          update state for (part, step)
+          end
 
 
 

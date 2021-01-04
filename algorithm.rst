@@ -85,8 +85,29 @@ execution phase.
 
   __run_step(part, step):
       __prepare(part, step)
-      run scriptlet for (part, step)
-      update state for (part, step)
+
+      if step is PULL:
+          clear any previously failed pull
+          __pull_handler(part) or override-pull scriptlet for this part
+          update state for (part, step)
+
+      if step is BUILD:
+          wipe and repopulate part build dir
+          __build_handler(part) or override-build scriptlet for this part
+          organize installed files
+          update state for (part, step)
+
+      if step is STAGE:
+          __stage_handler(part) or override-stage scriptlet for this part
+          if (part, STAGE) didn't already run:
+              update state for (part, step) with no snaps, no dirs
+
+      if step is PRIME:
+          __prime_handler(part) or override-prime scriptlet for this part
+          if (part, STAGE) didn't already run:
+              update state for (part, step) with empty data
+
+      set (part, step) as ran
 
 
 
@@ -116,6 +137,28 @@ execution phase.
           organize (overwriting if needed)
           update state for (part, step)
           end
+
+
+
+  __pull_handler(part):
+      source pull (if applicable)
+
+
+
+  __build_handler(part):
+      generate and run the plugin build script
+
+
+
+  __stage_handler(part):
+      migrate installed files to staging area
+      update state for (part, step) if everythig is ok
+
+
+
+  __prime_handler(part):
+      migrate files from stage to prime
+      update state for (part, step)
 
 
 

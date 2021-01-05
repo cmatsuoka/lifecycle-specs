@@ -12,6 +12,9 @@ execution phase.
   __main(target_step, parts):
       validate parts schema
       sort parts
+      install build packages
+      install source type packages
+      install build snaps
       run __lifecycle(target_step, parts)
 
 

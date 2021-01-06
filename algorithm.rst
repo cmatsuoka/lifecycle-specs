@@ -74,15 +74,15 @@ execution phase.
       reset environment
       get dependencies for this part that should run STAGE or PRIME
       if there are dependencies, run lifecycle again for this step and dependent parts
-      remove part install tree
 
       if step is PULL:
-          fetch and install stage packages
-          fetch and install stage snaps
+          fetch and unpack stage packages
+          fetch and unpack stage snaps
 
-      if step is STAGE:
-          install stage packages
-          install stage snaps
+      if step is BUILD:
+          remove part install tree
+          unpack stage packages
+          unpack stage snaps
 
 
 

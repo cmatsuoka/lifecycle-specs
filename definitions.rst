@@ -24,7 +24,7 @@ Part order
   they depend on. If no dependency relation exists, parts are sorted
   alphabetically by name. Dependency cycles are not allowed.
 
-Ṕlanning phase
+Planning phase
   The execution of the algorithm without changes to the disk (except for
   package list updates from remote repositories). The outcome of the
   planning phase is a list of actions to be handled at a later moment.

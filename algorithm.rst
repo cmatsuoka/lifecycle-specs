@@ -72,8 +72,9 @@ execution phase.
 
   __prepare(part, step):
       reset environment
-      get dependencies for this part that should run STAGE or PRIME
-      if there are dependencies, run lifecycle again for this step and dependent parts
+      if step > PULL:   // with v2 plugins we don't need to stage dependencies before PULL
+          get dependencies for this part that should run STAGE or PRIME
+          if there are dependencies, run lifecycle again for this step and dependent parts
 
       if step is PULL:
           fetch and unpack stage packages
@@ -180,7 +181,10 @@ execution phase.
 
 
 
-  __is_dirty(step, part):
+  __is_dirty(part, step):
+      if step is PULL:      // with v2 plugins we don't need to repull if dependency is restaged
+          we're not dirty
+
       check if properties or options of interest from (step, part) have changed
       if they've changed:
          // Shouldn't we return here if we know we're dirty?
